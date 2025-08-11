@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro AABB Aracaju com Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .signup-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        h2 {
+            color: #004d99;
+            margin-bottom: 25px;
+        }
+
+        .signup-form input[type="text"],
+        .signup-form input[type="email"],
+        .signup-form input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .signup-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #004d99;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .signup-form button:hover {
+            background-color: #003366;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #004d99;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        #erro-mensagem {
+            color: red;
+            margin-bottom: 15px;
+            display: none; /* Inicia oculto */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="logo">
+            <img src="aabb-aracaju-logo.jpg" alt="Logo AABB Aracaju">
+        </div>
+        <h2>Crie sua conta</h2>
+        <p id="erro-mensagem"></p>
+        <form class="signup-form" id="cadastro-form">
+            <input type="text" id="nome-input" placeholder="Nome completo" required>
+            <input type="email" id="email-input" placeholder="E-mail" required>
+            <input type="password" id="senha-input" placeholder="Senha" required>
+            <input type="password" id="confirma-senha-input" placeholder="Confirme a senha" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <div class="login-link">
+            Já tem uma conta? <a href="login.html">Faça login</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // Suas chaves de configuração do Firebase.
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZe5fiHqRJsaKznb7Uyz9AdO8fR8MxX7M",
+            authDomain: "login-c4aa5.firebaseapp.com",
+            projectId: "login-c4aa5",
+            storageBucket: "login-c4aa5.firebasestorage.app",
+            messagingSenderId: "390340263588",
+            appId: "1:390340263588:web:2b51b8dbc6911b74717031"
+        };
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Referências aos serviços
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Referências aos elementos do formulário
+        const form = document.getElementById('cadastro-form');
+        const nomeInput = document.getElementById('nome-input');
+        const emailInput = document.getElementById('email-input');
+        const senhaInput = document.getElementById('senha-input');
+        const confirmaSenhaInput = document.getElementById('confirma-senha-input');
+        const erroMensagem = document.getElementById('erro-mensagem');
+
+        // Adiciona um "listener" para o evento de envio do formulário
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Impede o envio tradicional do formulário
+
+            const nome = nomeInput.value;
+            const email = emailInput.value;
+            const senha = senhaInput.value;
+            const confirmaSenha = confirmaSenhaInput.value;
+
+            if (senha !== confirmaSenha) {
+                erroMensagem.textContent = 'As senhas não coincidem!';
+                erroMensagem.style.display = 'block';
+                return;
+            }
+
+            erroMensagem.style.display = 'none';
+
+            auth.createUserWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('Usuário cadastrado com sucesso!', user);
+
+                    return db.collection('usuarios').doc(user.uid).set({
+                        nome: nome,
+                        email: email,
+                        dataCadastro: new Date()
+                    });
+                })
+                .then(() => {
+                    alert('Cadastro realizado com sucesso! Faça login.');
+                    window.location.href = 'login.html';
+                })
+                .catch((error) => {
+                    let errorMessage = '';
+                    switch(error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'Este e-mail já está em uso.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'O formato do e-mail é inválido.';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+                            break;
+                        default:
+                            errorMessage = 'Ocorreu um erro no cadastro: ' + error.message;
+                    }
+                    erroMensagem.textContent = errorMessage;
+                    erroMensagem.style.display = 'block';
+                });
+        });
+    </script>
+
+</body>
+</html>
