@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro AABB Aracaju</title>
+    <title>Acesso AABB Aracaju</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             margin: 0;
         }
 
-        .signup-container {
+        .login-container {
             background-color: #fff;
             padding: 40px;
             border-radius: 8px;
@@ -34,14 +34,8 @@
             height: auto;
         }
 
-        h2 {
-            color: #004d99;
-            margin-bottom: 25px;
-        }
-
-        .signup-form input[type="text"],
-        .signup-form input[type="email"],
-        .signup-form input[type="password"] {
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
@@ -50,10 +44,10 @@
             font-size: 16px;
         }
 
-        .signup-form button {
+        .login-form button {
             width: 100%;
             padding: 12px;
-            background-color: #004d99;
+            background-color: #004d99; /* Azul do logo */
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -63,41 +57,38 @@
             transition: background-color 0.3s ease;
         }
 
-        .signup-form button:hover {
-            background-color: #003366;
+        .login-form button:hover {
+            background-color: #003366; /* Azul um pouco mais escuro */
         }
 
-        .login-link {
+        .forgot-password {
             margin-top: 15px;
             font-size: 14px;
         }
 
-        .login-link a {
-            color: #004d99;
+        .forgot-password a {
+            color: #004d99; /* Azul do logo */
             text-decoration: none;
         }
 
-        .login-link a:hover {
+        .forgot-password a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <div class="signup-container">
+    <div class="login-container">
         <div class="logo">
             <img src="aabb-aracaju-logo.jpg" alt="Logo AABB Aracaju">
         </div>
-        <h2>Crie sua conta</h2>
-        <form class="signup-form" action="cadastro.php" method="POST">
-            <input type="text" name="nome" placeholder="Nome completo" required>
-            <input type="email" name="email" placeholder="E-mail" required>
-            <input type="password" name="senha" placeholder="Senha" required>
-            <input type="password" name="confirma_senha" placeholder="Confirme a senha" required>
-            <button type="submit">Cadastrar</button>
+        <form class="login-form">
+            <input type="text" placeholder="Nome de usuário ou e-mail" required>
+            <input type="password" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
         </form>
-        <div class="login-link">
-            Já tem uma conta? <a href="login.html">Faça login</a>
+        <div class="forgot-password">
+            <a href="#">Esqueceu a senha?</a>
         </div>
     </div>
 
