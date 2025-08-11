@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso AABB Aracaju</title>
+    <title>Login - AABB Aracaju</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,7 +34,12 @@
             height: auto;
         }
 
-        .login-form input[type="text"],
+        h2 {
+            color: #004d99;
+            margin-bottom: 25px;
+        }
+
+        .login-form input[type="email"],
         .login-form input[type="password"] {
             width: calc(100% - 20px);
             padding: 10px;
@@ -47,7 +52,7 @@
         .login-form button {
             width: 100%;
             padding: 12px;
-            background-color: #004d99; /* Azul do logo */
+            background-color: #004d99;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -58,21 +63,29 @@
         }
 
         .login-form button:hover {
-            background-color: #003366; /* Azul um pouco mais escuro */
+            background-color: #003366;
         }
 
-        .forgot-password {
+        .links-container {
             margin-top: 15px;
             font-size: 14px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        .forgot-password a {
-            color: #004d99; /* Azul do logo */
+        .links-container a {
+            color: #004d99;
             text-decoration: none;
         }
 
-        .forgot-password a:hover {
+        .links-container a:hover {
             text-decoration: underline;
+        }
+
+        #erro-mensagem {
+            color: red;
+            margin-bottom: 15px;
+            display: none;
         }
     </style>
 </head>
@@ -82,15 +95,80 @@
         <div class="logo">
             <img src="aabb-aracaju-logo.jpg" alt="Logo AABB Aracaju">
         </div>
-        <form class="login-form">
-            <input type="text" placeholder="Nome de usuário ou e-mail" required>
-            <input type="password" placeholder="Senha" required>
+        <h2>Acesso à Área do Sócio</h2>
+        <p id="erro-mensagem"></p>
+        <form class="login-form" id="login-form">
+            <input type="email" id="email-input" placeholder="E-mail" required>
+            <input type="password" id="senha-input" placeholder="Senha" required>
             <button type="submit">Entrar</button>
         </form>
-        <div class="forgot-password">
+        <div class="links-container">
             <a href="#">Esqueceu a senha?</a>
+            <a href="cadastro.html">Cadastre-se</a>
         </div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        // Suas chaves de configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZe5fiHqRJsaKznb7Uyz9AdO8fR8MxX7M",
+            authDomain: "login-c4aa5.firebaseapp.com",
+            projectId: "login-c4aa5",
+            storageBucket: "login-c4aa5.firebasestorage.app",
+            messagingSenderId: "390340263588",
+            appId: "1:390340263588:web:2b51b8dbc6911b74717031"
+        };
+
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const form = document.getElementById('login-form');
+        const emailInput = document.getElementById('email-input');
+        const senhaInput = document.getElementById('senha-input');
+        const erroMensagem = document.getElementById('erro-mensagem');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value;
+            const senha = senhaInput.value;
+            
+            // Oculta a mensagem de erro anterior, se houver
+            erroMensagem.style.display = 'none';
+
+            auth.signInWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    // Login bem-sucedido!
+                    console.log('Login bem-sucedido!', userCredential.user);
+                    
+                    // AQUI ESTÁ A MUDANÇA: Redireciona para o URL específico
+                    window.location.href = 'https://www.aabbaju.org.br/secretaria';
+                })
+                .catch((error) => {
+                    // Ocorreu um erro no login
+                    let errorMessage = '';
+                    switch(error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'Usuário não encontrado. Verifique seu e-mail.';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Senha incorreta. Tente novamente.';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'O formato do e-mail é inválido.';
+                            break;
+                        default:
+                            errorMessage = 'Ocorreu um erro ao fazer login: ' + error.message;
+                    }
+                    erroMensagem.textContent = errorMessage;
+                    erroMensagem.style.display = 'block';
+                });
+        });
+    </script>
 
 </body>
 </html>
