@@ -95,7 +95,7 @@
         <div class="logo">
             <img src="aabb-aracaju-logo.jpg" alt="Logo AABB Aracaju">
         </div>
-        <h2>Acesso Secretaria</h2>
+        <h2>Acesso à Área do Sócio</h2>
         <p id="erro-mensagem"></p>
         <form class="login-form" id="login-form">
             <input type="email" id="email-input" placeholder="E-mail" required>
@@ -137,19 +137,16 @@
             const email = emailInput.value;
             const senha = senhaInput.value;
             
-            // Oculta a mensagem de erro anterior, se houver
             erroMensagem.style.display = 'none';
 
             auth.signInWithEmailAndPassword(email, senha)
                 .then((userCredential) => {
-                    // Login bem-sucedido!
                     console.log('Login bem-sucedido!', userCredential.user);
                     
-                    // AQUI ESTÁ A MUDANÇA: Redireciona para o URL específico
-                    window.location.href = 'https://www.aabbaju.org.br/secretaria';
+                    // --- MUDANÇA REALIZADA AQUI ---
+                    window.location.href = 'https://aracaju.senseimultisiteaabb.com.br/page/adminstrativo/';
                 })
                 .catch((error) => {
-                    // Ocorreu um erro no login
                     let errorMessage = '';
                     switch(error.code) {
                         case 'auth/user-not-found':
